@@ -1484,7 +1484,7 @@ addButton("Prob Hunt", function()
 	end 
 end)
 
-addButton("Elevator" function()
+addButton("Elevator", function()
 	RedGui()
 	createPage()
 	addButton("Collect Coins", function()
