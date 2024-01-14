@@ -1,0 +1,1731 @@
+loadstring(game:HttpGet('https://raw.githubusercontent.com/RedZenXYZ/RedHub/main/Red_GuiScript'))()
+
+RedGui()
+local ScrollFrame = createPage("Games")
+
+local SearchBar = addTextBox("", "SearchBar")
+
+local scrollingframe = ScrollFrame
+local searchbar = SearchBar
+function UpdateInputOfSearchText()
+	local InputText = string.upper(searchbar.Text)
+	for _, frame in pairs(scrollingframe:GetChildren())do
+		if frame:IsA("TextButton") then
+			if InputText == "" or frame.Name:upper():find(InputText) ~= nil then
+				frame.Visible = true
+		 	else
+				frame.Visible = false
+			end
+		end
+	end
+end
+searchbar.Changed:Connect(UpdateInputOfSearchText)
+
+addButton("Harmful Company", function()
+	RedGui()
+	createPage("Items")
+	
+	addButton("Get Items (Get Rewards)", function()
+		for i,v in pairs(game:GetService("Workspace").Items:GetChildren()) do
+			if (v.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).magnitude >= 30 then
+				ItemMode(v, "DropItem")
+				wait(0.3)
+				fireproximityprompt(v:FindFirstChildOfClass("ProximityPrompt"))
+				firetouchinterest(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, game:GetService("Workspace").Ship.droparea, 0)
+				firetouchinterest(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, game:GetService("Workspace").Ship.droparea, 1)
+				wait(0.2)
+				ItemMode(v, "DropItem")
+			end
+		end
+	end)
+	
+	addButton("Sell Items", function()
+		for i,v in pairs(game:GetService("Workspace").Items:GetChildren()) do
+			if v.Stats.Price.Value ~= 0 and v.Stats.Price.Value ~= 1 then
+				ItemMode(v, "SellItem")
+			end
+		end
+	end)
+	
+	addButton("Bring Paid Items", function()
+		for i,v in pairs(game:GetService("Workspace").Items:GetChildren()) do
+			if v.Stats.Price.Value == 0 then
+				ItemMode(v, "DropItem")
+			end
+		end
+	end)
+	
+	addButton("Bring Items", function()
+		for i,v in pairs(game:GetService("Workspace").Items:GetChildren()) do
+			ItemMode(v, "DropItem")
+		end
+	end)
+	
+	addButton("Make Players Drop Items", function()
+	  	for _,plr in pairs(game:GetService("Players"):GetPlayers()) do
+			if plr ~= game:GetService("Players").LocalPlayer then
+				for _,item in pairs(plr.Inventory:GetChildren()) do
+					ItemMode(item, "DropItem")
+				end
+			end
+		end
+	end)
+	
+	createPage("Attack")
+	
+	addToggle("Auto Attack Monsters", function()
+		local monsters = {}
+	
+		for i,v in pairs(game:GetService("Workspace").Map:GetChildren()) do
+			if v:FindFirstChildOfClass("Humanoid") and v:FindFirstChildOfClass("Humanoid").Health ~= 0 then
+				table.insert(monsters, v)
+			end
+		end
+	
+		local args = {
+			[1] = {
+				[1] = monsters,
+			  [2] = {}
+			 }
+		}
+	
+		game:GetService("Players").LocalPlayer.Character.Items:FindFirstChildOfClass("Part").RemoteEvent:FireServer(unpack(args))
+	end)
+	
+	createPage("Maps")
+	
+	local Maps = {
+		"The Company building",
+		"Aresia",
+		"Verdara",
+		"Florencia",
+		"Ogre"
+	}
+	
+	for i,v in pairs(Maps) do
+		addButton(v, function()
+			local args = {
+				[1] = {
+					[1] = "Terminal",
+					[2] = v
+				}
+			}
+	
+			game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+		end)
+	end
+	
+	createPage("Teleports")
+	
+	addButton("Ship", function()
+		Teleport(game:GetService("Workspace").Ship.SpawnLocation.CFrame)
+	end)
+	
+	addButton("Main Door", function()
+		Teleport(game:GetService("Workspace").Map.doorIn.CFrame)
+	end)
+	
+	addButton("Fire Exit", function()
+		Teleport(game:GetService("Workspace").Map.fireIn.CFrame)
+	end)
+	
+	function Teleport(cframe)
+		game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = cframe
+	end
+	
+	function ItemMode(Item, Mode)
+		local args = {
+			[1] = {
+				[1] = Mode,
+				[2] = Item
+			}
+		}
+	
+		game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+	end
+end)
+
+addButton("MM2", function()
+	RedGui()
+
+	createPage("AimBot ( Sheriff )")
+
+	
+
+	local MurderName = addTextLabel("nil")
+
+	
+
+	addToggle("Sheriff AimBot", function()
+
+		local MurderPlr = FindMurder()
+
+		if MurderPlr then
+
+			MurderName.Text = MurderPlr.Name
+
+		else
+
+			MurderName.Text = tostring(MurderPlr)
+
+		end
+
+		Shot(MurderPlr)
+
+	end)
+
+	
+
+	addToggle("Auto Equip Gun", function()
+
+		game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Gun").Parent = game:GetService("Players").LocalPlayer.Character
+
+	end)
+	
+	local Max = addTextBox("3", "")
+
+	
+
+	createPage("AimBot ( Murder )")
+
+	
+
+	local NearestTarget = addTextLabel("nil")
+
+	
+
+	addToggle("Murder AimBot", function()
+
+		local Target = GetNearest()
+
+		if Target then
+
+			NearestTarget.Text = Target.Name
+
+		else
+
+			NearestTarget.Text = tostring(Target)
+
+		end
+
+		Throw(Target)
+
+	end)
+
+	
+
+	createPage("ESP")
+
+	
+
+	local PlayerESP = addToggle("Player", function()
+
+		playerCharm()
+
+		wait(1)
+
+	end)
+
+	
+
+	function playerCharm()
+
+		for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+
+			if player ~= game:GetService("Players").LocalPlayer and player.Character and player.Character:FindFirstChildOfClass("Humanoid") and player.Character:FindFirstChildOfClass("Humanoid").Health ~= 0 then
+
+				if player.Character:FindFirstChild("Knife") or player.Backpack:FindFirstChild("Knife") then
+
+					Highlight(player, "red")
+
+				elseif player.Character:FindFirstChild("Gun") or player.Backpack:FindFirstChild("Gun") then
+
+					Highlight(player, "blue")
+
+				else
+
+					Highlight(player, "white")
+
+				end
+
+			end
+
+		end
+
+	end
+
+	
+
+	local roleColors = {
+
+		["red"] = Color3.new(1, 0, 0),
+
+		["blue"] = Color3.new(0, 0, 1),
+
+		["white"] = Color3.new(1, 1, 1)
+
+	}
+
+	
+
+	function GetPosition(target)
+
+		 if target.Character then
+
+			  local targetPosition = target.Character.HumanoidRootPart.Position
+
+			  local moveDirection = target.Character.Humanoid.MoveDirection
+
+	
+
+			  local predictedPosition = targetPosition + moveDirection * target.Character.HumanoidRootPart.Velocity.magnitude / tonumber(Max.Text)
+
+			  return predictedPosition
+
+		 end
+
+		
+
+		 return nil
+
+	end
+
+	
+
+	function Highlight(player, color)
+
+		local color = color:lower()
+
+		local roleColor = roleColors[color]
+
+		if player.Character:FindFirstChildOfClass("Highlight") then
+
+			player.Character:FindFirstChildOfClass("Highlight").FillColor = roleColor
+
+		else
+
+			local highlight = Instance.new("Highlight", player.Character)
+
+			highlight.FillColor = roleColor
+
+			task.spawn(function()
+
+				repeat wait() until PlayerESP.Text == "Player (Off)" or highlight.Parent == nil
+
+				highlight:Destroy()
+
+			end)
+
+		end
+
+	end
+
+	
+
+	function UnHighlight(player)
+
+		if player.Character:FindFirstChildOfClass("Highlight") then
+
+			player.Character:FindFirstChildOfClass("Highlight"):Destroy()
+
+		end
+
+	end
+
+	
+
+	function IsBlocked(plr)
+
+		local LocalCharacter = game:GetService("Players").LocalPlayer.Character
+
+		local Ray = Ray.new(LocalCharacter.PrimaryPart.Position, (plr.Character.PrimaryPart.Position - LocalCharacter.PrimaryPart.Position))
+
+		local part = game:GetService("Workspace"):FindPartOnRayWithIgnoreList(Ray, {LocalCharacter})
+
+		if part ~= nil then
+
+			if part:IsDescendantOf(plr.Character) then
+
+				return true
+
+			end
+
+		end
+
+		
+
+		return false
+
+	end
+
+	
+
+	function GetUnBlockingPlayers()
+
+		local player = game:GetService("Players").LocalPlayer
+
+		players = game:GetService("Players"):GetPlayers()
+
+		
+
+		local LocalCharacter = game:GetService("Players").LocalPlayer.Character
+
+		local Players = {}
+
+		for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+
+			if plr ~= player and plr.Character and plr.Character:FindFirstChildOfClass("Humanoid") and plr.Character:FindFirstChildOfClass("Humanoid").Health ~= 0 then
+
+				local Ray = Ray.new(LocalCharacter.PrimaryPart.Position, (plr.Character.PrimaryPart.Position - LocalCharacter.PrimaryPart.Position))
+
+				local part = game:GetService("Workspace"):FindPartOnRayWithIgnoreList(Ray, {LocalCharacter})
+
+				if part ~= nil then
+
+					if part:IsDescendantOf(plr.Character) then
+
+						table.insert(Players, plr)
+
+					end
+
+				end
+
+			end
+
+		end
+
+		
+
+		return Players
+
+	end
+
+	
+
+	function GetNearest()
+
+		local closestPlayer, closestDistance
+
+		for _, p in pairs(GetUnBlockingPlayers()) do
+
+			if p ~= game:GetService("Players").LocalPlayer and p.Character and IsBlocked(p) then
+
+				local distance = (game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position - p.Character.PrimaryPart.Position).Magnitude
+
+				if not closestDistance or distance < closestDistance then
+
+					closestDistance = distance
+
+					closestPlayer = p
+
+				end
+
+			end
+
+		end
+
+	
+
+		if closestPlayer then
+
+			return (closestPlayer)
+
+		end
+
+		
+
+		return nil
+
+	end
+
+	
+
+	function FindMurder()
+
+		for _, murder in pairs(game:GetService("Players"):GetPlayers()) do
+
+			if (murder.Backpack:FindFirstChild("Knife")) or (murder.Character and murder.Character:FindFirstChild("Knife")) then
+
+				if IsBlocked(murder) then
+
+					return murder
+
+				end
+
+			end
+
+		end
+
+	end
+
+	
+
+	function Throw(Target)
+
+		pcall(function()
+
+			local pos = GetPosition(Target)
+
+			local cframe = CFrame.new(pos.X, pos.Y, pos.Z)
+
+			game:GetService("Players").LocalPlayer.Character:FindFirstChild("Knife").Throw:FireServer(cframe, game:GetService("Players").LocalPlayer.Character.RightHand.Position)
+
+		end)
+
+	end
+
+	
+
+	function Shot(Target)
+
+		pcall(function()
+
+			local pos = GetPosition(Target)
+
+			game:GetService("Players").LocalPlayer.Character:FindFirstChild("Gun").KnifeServer.ShootGun:InvokeServer(1, pos, "AH")
+
+		end)
+
+	end
+end)
+
+addButton("Treasure Hunter Sim", function()
+	local Chests = game:GetService("Workspace").SandBlocks
+	local IsFull = false
+	
+	RedGui()
+	createPage("Main")
+	
+	local FloatPath = Instance.new("Part", game:GetService("Workspace"))
+	FloatPath.Size = Vector3.new(5, 0.1, 5)
+	FloatPath.Anchored = true
+	
+	addToggle("Auto Chest", function()
+		for _, chest in pairs(Chests:GetChildren()) do
+			if chest.Material == Enum.Material.Plastic and IsFull == false then
+				chest.CanCollide = false
+				FloatPath.Position = Vector3.new(chest.Position.X, chest.Position.Y - game:GetService("Players").LocalPlayer.Character.Humanoid.HipHeight, chest.Position.Z)
+				game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = chest.CFrame
+				GetTool().RemoteClick:FireServer(chest)
+				break
+			end
+		end
+	end)
+	
+	addToggle("Auto Sand", function()
+		GetTool().RemoteClick:FireServer(NearestSand())
+	end)
+	
+	addToggle("Auto Sell", function()
+		local Amount = game:GetService("Players").LocalPlayer.PlayerGui.Gui.Buttons.Sand.Amount.Text:gsub(",", ""):gsub(" ", ""):split("/")
+		local Current = Amount[1]
+		local Max = Amount[2]
+		if Current == Max then
+			IsFull = true
+			game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(4, 10, -160)
+			game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("AreaSell"):FireServer()
+		else
+			IsFull = false
+		end
+	end)
+	
+	addToggle("Auto Rebirth", function()
+		game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Rebirth"):FireServer()
+	end)
+	
+	function NearestSand()
+		local Sands = {}
+		local Dists = {}
+		for _, sand in pairs(Chests:GetChildren()) do
+			if (sand.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).magnitude <= 20 then
+				Sands[tostring((sand.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).magnitude)] = sand
+				table.insert(Dists, (sand.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).magnitude)
+			end
+		end
+	
+		return Sands[tostring(math.min(unpack(Dists)))]
+	end
+	
+	function GetTool()
+		if game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool") then
+			return game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool")
+		elseif game:GetService("Players").LocalPlayer.Backpack:FindFirstChildOfClass("Tool") then
+			game:GetService("Players").LocalPlayer.Backpack:FindFirstChildOfClass("Tool").Parent = game:GetService("Players").LocalPlayer.Character
+			return game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool")
+		end
+	end
+	
+	OnKillGui(function()
+		FloatPath:Destroy()
+	end)
+end)
+
+addButton("Droid", function()
+	local Plr = game:GetService("Players").LocalPlayer
+	local FloatPart = Instance.new("Part", game:GetService("Workspace"))
+	
+	local IgnoresNPC = {
+		"Anti",
+		"Friendly",
+		"Undead"
+	}
+	
+	local DamageParts = {
+		"Laser",
+		"Hazard",
+		"Acid",
+		"Sludge",
+		"Mud",
+		"Killer",
+		"Safe",
+		"Lava",
+		"Water",
+		"NegativeCircuit",
+		"Bullet",
+		"GigaIcicle",
+		"Hat",
+		"Head",
+		"Left Arm",
+		"Right Arm",
+		"Left Leg",
+		"Right Leg"
+	}
+	
+	FloatPart.Size = Vector3.new(10, 0.5, 10)
+	FloatPart.Anchored = true
+	FloatPart.Transparency = 0.9
+	
+	RedGui()
+	createPage("Lobby")
+	
+	addButton("Unlocked All Classes", function()
+		local Classes = game:GetService("Players").LocalPlayer.PlayerGui.ClassGui.ClassButtons
+		local ClassesValue = game:GetService("Players").LocalPlayer.PlayerGui.ClassGui.ClassInventory
+		
+		for _, class in pairs(Classes:GetChildren()) do
+			if class:IsA("ImageButton") then
+				ClassesValue.Value = ClassesValue.Value .. " | " .. class.Name
+			end
+		end
+	end)
+	
+	createPage("Main")
+	
+	addButton("Kill Friendly Droid", function()
+		for _, droid in pairs(workspace:GetDescendants()) do
+			if droid:IsA("Model") and droid.Name:find("Friendly") and droid:FindFirstChildOfClass("Humanoid") and droid:FindFirstChildOfClass("Humanoid").Health ~= 0 then
+				droid:FindFirstChildOfClass("Humanoid").Health = 0
+			end
+		end
+	end)
+	
+	addToggle("Anti_Damage", function()
+		local Players = {}
+		for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+			table.insert(Players, plr.Character)
+		end
+		for _, spike in pairs(workspace:GetDescendants()) do
+			if spike.Name == "GigaIcicle" then
+				spike:Destroy()
+			end
+		end
+		for _, dmgPart in pairs(workspace:GetDescendants()) do
+			if table.find(DamageParts, dmgPart.Name) and not FindStringInStringTable(IgnoresNPC, dmgPart.Parent.Name) and not table.find(Players, dmgPart.Parent) and not table.find(Players, dmgPart.Parent.Parent) and not dmgPart.Parent.Parent:FindFirstChildOfClass("Humanoid") then
+				for _, touchDamage in pairs(dmgPart:GetDescendants()) do
+					if touchDamage:IsA("TouchTransmitter") then
+						touchDamage:Destroy()
+					end
+				end
+			end
+		end
+	end)
+	
+	addToggle("Auto Kill", function()
+		local Players = {}
+		for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+			table.insert(Players, plr.Character)
+		end
+		for _, Hum in pairs(game:GetService("Workspace"):GetDescendants()) do
+			if Hum:IsA("Humanoid") and not FindStringInStringTable(IgnoresNPC, Hum.Parent.Name) and Hum.Health ~= 0 and not table.find(Players, Hum.Parent) then
+				wait()
+				Hum.Health = 0
+				wait()
+				Hum.Health = 1
+				wait()
+			end
+		end
+	end)
+	
+	addToggle("Auto Attack", function()
+		local Sword = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool")
+		local Handle = Sword:FindFirstChild("Handle")
+		
+		if Sword:FindFirstChild("Handle") and Sword:FindFirstChild("Handle"):FindFirstChildOfClass("TouchTransmitter") then
+			for _, enemy in pairs(game:GetService("Workspace").Room.Enemies:GetChildren()) do
+				if enemy:IsA("Model") and not FindStringInStringTable(IgnoresNPC, enemy.Name) and enemy:FindFirstChildOfClass("Humanoid").Health ~= 0 and enemy:FindFirstChild("HumanoidRootPart") then
+					firetouchinterest(Handle, enemy:FindFirstChild("HumanoidRootPart"), 0)
+					firetouchinterest(Handle, enemy:FindFirstChild("HumanoidRootPart"), 1)
+				end
+			end
+		end
+	end)
+	
+	addToggle("Get Circuit ", function()
+		for _, circuit in pairs(game:GetService("Workspace"):GetDescendants()) do
+			if not circuit.Name:lower():find("negative") and circuit.Name:lower():find("circuit") and circuit:FindFirstChildOfClass("TouchTransmitter") then
+				firetouchinterest(circuit, Plr.Character.HumanoidRootPart, 0)
+			end
+		end
+	end)
+	
+	addToggle("Click Button", function()
+		for _, button in pairs(game:GetService("Workspace"):GetDescendants()) do
+			if button.Name:lower():find("button") and button:FindFirstChildOfClass("ClickDetector") then
+				wait(0.1)
+				fireclickdetector(button:FindFirstChildOfClass("ClickDetector"))
+			end
+		end
+	end)
+	
+	addToggle("Get Dropped Item", function()
+		for _, item in pairs(game:GetService("Workspace"):GetDescendants()) do
+			if item:IsA("Tool") and not item.Parent:FindFirstChildOfClass("Humanoid") and item:FindFirstChild("Handle") and item:FindFirstChild("Handle"):FindFirstChildOfClass("TouchTransmitter") then
+				firetouchinterest(item.Handle, Plr.Character.HumanoidRootPart, 0)
+				firetouchinterest(item.Handle, Plr.Character.HumanoidRootPart, 1)
+			end
+		end
+	end)
+	
+	createPage("Skills")
+	
+	addToggle("Skill 1", function()
+		game:GetService("ReplicatedStorage").ClassEvent:FireServer(1)
+	end)
+	
+	addToggle("Skill 2", function()
+		game:GetService("ReplicatedStorage").ClassEvent:FireServer(2)
+	end)
+	
+	createPage("Map")
+	
+	local PosType = addSelected("Under")
+	
+	addClickSelect("Up")
+	addClickSelect("Under")
+	addClickSelect("Enemy")
+	
+	addToggle("Auto Teleport To Current Map", function()
+		if PosType.Button.Text == "Under" then
+			FloatPart.Position = game:GetService("Workspace"):FindFirstChild("Room").Floor.Position + Vector3.new(0, -10, 0)
+			Plr.Character.HumanoidRootPart.CFrame = game:GetService("Workspace"):FindFirstChild("Room").Floor.CFrame * CFrame.new(0, -6.5, 0)
+		elseif PosType.Button.Text == "Up" then
+			FloatPart.Position = game:GetService("Workspace"):FindFirstChild("Room").Floor.Position + Vector3.new(0, 30, 0)
+			Plr.Character.HumanoidRootPart.CFrame = game:GetService("Workspace"):FindFirstChild("Room").Floor.CFrame * CFrame.new(0, 33.5, 0)
+		elseif PosType.Button.Text == "Enemy" then
+			local Pos = GetNearestEnemy().PrimaryPart.Position
+			FloatPart.Position = Pos + Vector3.new(0, 5, 0)
+			Plr.Character.HumanoidRootPart.CFrame = CFrame.new(Pos.X, Pos.Y, Pos.Z) * CFrame.new(0, 8.5, 0)
+		end
+	end)
+	
+	pcall(function()
+		local ClassButtons = game:GetService("Players").LocalPlayer.PlayerGui.ClassGui.MainFrame.ButtonContainer.ScrollFrame
+		
+		ClassButtons.ChildAdded:Connect(function(button)
+			if button:IsA("ImageButton") then
+				button.MouseButton1Click:Connect(function()
+					local args = {
+						 [1] = "Brawler",
+						 [2] = "Change Value"
+					}
+					
+					game:GetService("ReplicatedStorage"):WaitForChild("ClassSetEvent"):FireServer(unpack(args))
+					local args = {
+						 [1] = button.Name,
+						 [2] = "Change Value"
+					}
+					
+					game:GetService("ReplicatedStorage"):WaitForChild("ClassSetEvent"):FireServer(unpack(args))
+				end)
+			end
+		end)
+	end)
+	
+	function GetNearestEnemy()
+		local player = game:GetService("Players").LocalPlayer
+		if player.Character then
+			local character = player.Character
+			ohVector32 = character.PrimaryPart.Position
+		else
+			return
+		end
+		local closestEnemy, closestDistance
+		for _, p in pairs(workspace.Room.Enemies:GetChildren()) do
+			if p and p:FindFirstChildOfClass("Humanoid") and p:FindFirstChildOfClass("Humanoid").Health ~= 0 then
+				local distance = (ohVector32 - p.PrimaryPart.Position).Magnitude
+				if not closestDistance or distance < closestDistance then
+					closestDistance = distance
+					closestEnemy = p
+				end
+			end
+		end
+		if closestEnemy then
+			return closestEnemy
+		end
+	end
+	
+	function FindStringInStringTable(Table, String)
+		for _, string in pairs(Table) do
+			if String:find(string) then
+				return true
+			end
+		end
+		
+		return false
+	end
+end)
+
+addButton("Blade Ball", function()
+	RedGui()
+	createPage()
+	
+	addToggle("Parry", function()
+		local Ball1 = game:GetService("Workspace").Balls:GetChildren()[1]
+		local Ball2 = game:GetService("Workspace").Balls:GetChildren()[2]
+	
+		local IsChasing = tostring(Ball2.BrickColor):lower():find("red")
+	
+		local MinDist = 10
+		local MaxDist = 100
+		local Dist = (game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position - Ball1.Position).magnitude
+	
+		local Speed = math.round(Ball1.Velocity.Magnitude) / 2
+	
+		if Dist <= Speed and IsChasing then
+			game:GetService("ReplicatedStorage").Remotes.ParryButtonPress:Fire()
+		end
+	end)
+end)
+
+addButton("SkyWar", function()
+	RedGui()
+	createPage()
+	
+	addToggle("Auto Mining Blocks", function()
+		local root = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart
+		local PlrY = root.Position.Y - 3
+		
+		local function GetMap()
+			for _, map in pairs(game:GetService("Workspace"):GetChildren()) do
+				if map.Name:find("Map") then
+					return map
+				end
+			end
+		end
+		
+		for _, block in pairs(GetMap().Map:GetChildren()) do
+			if block:IsA("Part") and PlrY < block.Position.Y and (block.Position - root.Position).Magnitude < 30 then
+				local args = {
+					[1] = block
+				}
+		
+				game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Axe"):FindFirstChildOfClass("RemoteEvent"):FireServer(unpack(args))
+			end
+		end
+		end)
+		
+		addToggle("Auto Mining Ores", function()
+		local root = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart
+		local PlrY = root.Position.Y - 3
+		
+		local function GetMap()
+			for _, map in pairs(game:GetService("Workspace"):GetChildren()) do
+				if map.Name:find("Map") then
+					return map
+				end
+			end
+		end
+		
+		for _, block in pairs(GetMap().Map.Ores:GetChildren()) do
+			if block:IsA("Part") and (block.Position - root.Position).Magnitude < 30 then
+				local args = {
+					[1] = block
+				}
+		
+				game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Axe"):FindFirstChildOfClass("RemoteEvent"):FireServer(unpack(args))
+			end
+		end
+	end)
+end)
+
+addButton("Zombies Attack", function()
+	local Highlight = Instance.new("Highlight")
+	
+	RedGui()
+	createPage()
+	
+	addToggle("Auto Shoot", function()
+		local Zombie = GetNearestZombie()
+		Highlight.Parent = Zombie
+	
+		local args = {
+			 [1] = {
+				  ["Normal"] = Vector3.yAxis,
+			 	 ["Direction"] = Vector3.new(-389.2908630371094, -223.1598358154297, -220.57269287109375),
+			 	 ["Name"] = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass('Tool').Name,
+			 	 ["Hit"] = Zombie.Head,
+				  ["Origin"] = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool").Origin.Position,
+			 	 ["Pos"] = Zombie.Head.Position
+		 	}
+		}
+	
+		game:GetService("ReplicatedStorage"):WaitForChild("Gun"):FireServer(unpack(args))
+	end)
+	
+	function GetNearestZombie()
+		local Char = game:GetService("Players").LocalPlayer.Character
+		local Zombies = {}
+		local Dist = {}
+		for _, zom in pairs(game:GetService("Workspace").enemies:GetChildren()) do
+			if Ray2(Char:FindFirstChildOfClass("Tool").Origin.Position, zom.Head.Position) == true then
+				Zombies[(zom.Head.Position - Char.Head.Position).magnitude] = zom
+				table.insert(Dist, (zom.Head.Position - Char.Head.Position).magnitude)
+			end
+			if game:GetService("Workspace").BossFolder:FindFirstChildOfClass("Model") then
+				local Boss = game:GetService("Workspace").BossFolder:FindFirstChildOfClass("Model")
+				return Boss
+			end
+		end
+	
+		return Zombies[math.min(unpack(Dist))]
+	end
+	
+	OnKillGui(function()
+		Highlight:Destroy()
+	end)
+end)
+
+addButton("Prison Life", function()
+	RedGui()
+	createPage()
+	
+	addToggle("Kill Aura", function()
+		for _, target in pairs(GetPlayer("nearest")) do
+			local args = {
+				[1] = target
+			}
+		
+			game:GetService("ReplicatedStorage"):WaitForChild("meleeEvent"):FireServer(unpack(args))
+		end
+	end)
+	
+	addToggle("Auto shoot", function()
+		for _, target in pairs(GetPlayer("nearest", {["Team"] = true, ["Raycasting"] = true})) do
+			local args = {
+				[1] = {
+					[1] = {
+							["RayObject"] = Ray.new(game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool").Muzzle.Position, target.Character.HumanoidRootPart.Position),
+							["Distance"] = (target.Character.PrimaryPart.Position - game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position).magnitude,
+							["Cframe"] = target.Character.HumanoidRootPart.CFrame,
+							["Hit"] = target.Character.Head
+					}
+				},
+				[2] = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool")
+			}
+		
+			game:GetService("ReplicatedStorage"):WaitForChild("ShootEvent"):FireServer(unpack(args))
+		end
+	end)
+end)
+
+addButton("Trench War", function()
+	RedGui()
+	createPage()
+	
+	addButton("Kill", function()
+		for _, target in pairs(getPlayer("nearest", {["Team"] = true, ["Raycasting"] = true})) do
+			local args = {
+				[1] = target.Character:FindFirstChildOfClass("Humanoid"),
+				[2] = 200,
+				[3] = {
+					[1] = (target.Character.PrimaryPart.Position - game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position).magnitude,
+					[2] = target.Character.HumanoidRootPart.CFrame
+				}
+			}
+		
+			game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+		end
+	end)
+end)
+
+addButton("Cross the boarder", function()
+	local Plr = game:GetService("Players").LocalPlayer
+	
+	RedGui()
+	createPage("Main")
+	
+	addToggle("Money", function()
+		for _, money in pairs(game:GetService("Workspace").money:GetChildren()) do
+			if money:IsA("Part") and money:FindFirstChildOfClass("ClickDetector") then
+				fireclickdetector(money:FindFirstChildOfClass("ClickDetector"))
+			end
+		end
+	end)
+	
+	addToggle("Shoot", function()
+		for _, target in pairs(getPlayer("nearest", {["Team"] = true, ["Raycasting"] = true})) do
+			local args = {
+				[1] = target.Character.PrimaryPart.Position,
+				[2] = target.Character.Head,
+				[3] = Plr.Character["Right Arm"].Position
+			}
+			game:GetService("ReplicatedStorage"):WaitForChild("remotes"):WaitForChild("shoot"):FireServer(unpack(args))
+		end
+	end)
+end)
+
+addButton("The Test", function()
+	RedGui()
+	createPage("MiniGame")
+	
+	addButton("Drag Game", function()
+		game:GetService("ReplicatedStorage"):WaitForChild("WonDragMinigame"):FireServer()
+	end)
+	
+	addButton("Choose Number Game", function()
+		local args = {
+			 [1] = 1
+		}
+		
+		game:GetService("ReplicatedStorage"):WaitForChild("Vote"):FireServer(unpack(args))
+	end)
+	
+	addButton("Add Number Game", function()
+		local args = {
+			 [1] = 69
+		}
+		
+		game:GetService("ReplicatedStorage"):WaitForChild("RemoteEvents"):WaitForChild("SendTotalNumber"):FireServer(unpack(args))
+	end)
+	
+	createPage("Kill")
+	
+	local PlayersList = addSelected("NONE")
+	
+	addButton("Refresh", function()
+		for _, button in pairs(PlayersList.Frame:GetChildren()) do
+			if button:IsA("TextButton") then
+				button:Destroy()
+			end
+		end
+		for _, plr in pairs(getPlayer("all")) do
+			addClickSelect(plr.Name, PlayersList)
+		end
+	end)
+	
+	addButton("Kill", function()
+		local args = {
+			 [1] = game:GetService("Workspace"):WaitForChild(PlayersList.Button.Text)
+		}
+		
+		game:GetService("ReplicatedStorage"):WaitForChild("Kill"):FireServer(unpack(args))
+	end)
+	
+	addButton("Kill Others", function()
+		for _, plr in pairs(getPlayer("others")) do
+			local args = {
+				 [1] = plr.Character
+			}
+			
+			game:GetService("ReplicatedStorage"):WaitForChild("Kill"):FireServer(unpack(args))
+		end
+	end)
+	
+	createPage("Vote")
+	
+	addButton("Vote Yes", function()
+		local args = {
+			 [1] = 1,
+			 [2] = 0
+		}
+		
+		game:GetService("ReplicatedStorage"):WaitForChild("PlayerVotes"):FireServer(unpack(args))
+	end)
+	
+	addButton("Vote No", function()
+		local args = {
+			 [1] = 0,
+			 [2] = 1
+		}
+		
+		game:GetService("ReplicatedStorage"):WaitForChild("PlayerVotes"):FireServer(unpack(args))
+	end)
+end)
+
+addButton("TLK Prison", function()
+	local Taser = game:GetService("Players").LocalPlayer.Character.Taser
+	local Mouse = game:GetService("Players").LocalPlayer:GetMouse()
+	
+	Taser.Activated:Connect(function()
+		local pos = Mouse.hit
+		local Target = Mouse.target
+		local Position = Vector3.new(pos.X, pos.Y, pos.Z)
+		
+		local args = {
+			 [1] = "Recharge",
+			 [2] = Taser
+		}
+		game:GetService("ReplicatedStorage"):WaitForChild("Tase"):FireServer(unpack(args))
+		
+		local args = {
+			 [1] = "Hit",
+			 [2] = Taser,
+			 [3] = Target
+		}
+		game:GetService("ReplicatedStorage"):WaitForChild("Tase"):FireServer(unpack(args))
+
+		local args = {
+			 [1] = "Generate",
+			 [2] = Taser ,
+			 [3] = Position,
+			 [4] = Position
+		}
+		game:GetService("ReplicatedStorage"):WaitForChild("Tase"):FireServer(unpack(args))
+	end)
+end)
+
+addButton("I don't feel so good", function()
+	local Action = {
+		["Watering"] = 3,	
+		["Harvest"] = 2,
+		["Place"] = 1
+	}
+	
+	local PatchModels = game:GetService("Workspace").Camera.Patch.Patches
+	local Patches = {}
+	
+	for number = 1, #PatchModels:GetChildren() do
+		local number = tostring(number)
+		local patch = PatchModels["Patch" .. number]
+		local patchInfo = {
+			["Patch"] = patch,
+			["IsPlace"] = false,
+			["IsReady"] = false,
+			["IsWater"] = false
+		}
+		if patch:FindFirstChild("Berry") then
+			patchInfo.IsPlace = true
+		else
+			patchInfo.IsPlace = false
+		end
+		if patch:FindFirstChild("Berry") and patch:FindFirstChild("Berry").Size.X > 0.8 then
+			patchInfo.IsReady = true
+		else
+			patchInfo.IsReady = false
+		end
+		if patch.Color == Color3.fromRGB(53, 49, 37) or patch.Color == Color3.fromRGB(150, 150, 80) then
+			patchInfo.IsWater = true
+		else
+			patchInfo.IsWater = false
+		end
+		
+		table.insert(Patches, patchInfo)
+	end
+	
+	spawn(function()
+		while wait() do
+			for _, Patch in pairs(PatchModels:GetChildren()) do
+				local PatchNum = tonumber(tostring(Patch.Name:gsub("%D+", "")))
+				local PatchTable = Patches[PatchNum]
+				if Patch:FindFirstChild("Berry") then
+					PatchTable.IsPlace = true
+				else
+					PatchTable.IsPlace = false
+				end
+				if Patch:FindFirstChild("Berry") and Patch:FindFirstChild("Berry").Size.X > 0.8 then
+					PatchTable.IsReady = true
+				else
+					PatchTable.IsReady = false
+				end
+				if Patch.Color == Color3.fromRGB(53, 49, 37) or Patch.Color == Color3.fromRGB(150, 150, 80) then
+					PatchTable.IsWater = true
+				else
+					PatchTable.IsWater = false
+				end
+			end
+		end
+	end)
+	
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/RedZenXYZ/RedHub/main/Red_GuiScript'))()
+	
+	RedGui()
+	createPage("Farm")
+	
+	local GC = getconnections or get_signal_cons
+	if GC then
+		for i,v in pairs(GC(game:GetService("Players").LocalPlayer.Idled)) do
+			if v["Disable"] then
+				v["Disable"](v)
+			elseif v["Disconnect"] then
+				v["Disconnect"](v)
+			end
+		end
+	else
+		game:GetService("Players").LocalPlayer.Idled:Connect(function()
+			local VirtualUser = game:GetService("VirtualUser")
+			VirtualUser:CaptureController()
+			VirtualUser:ClickButton2(Vector2.new())
+		end)
+	end
+	
+	local SelectedPlant = addSelected("None")
+	
+	local SearchBar = addTextBox("", "Search Bar")
+	SearchBar.Parent = SelectedPlant.Frame
+	
+	local scrollingframe = SelectedPlant.Frame
+	local searchbar = SearchBar
+	function UpdateInputOfSearchText()
+		local InputText = string.upper(searchbar.Text)
+		for _,button in pairs(scrollingframe:GetChildren())do
+			if button:IsA("TextButton") and not string.find(button.Name, "Inv Button") and not string.find(button.Name, "Refresh") then
+				if InputText == "" or string.find(string.upper(button.Name),InputText) ~= nil then
+					button.Visible = true
+			 	else
+					button.Visible = false
+				end
+			end
+		end
+	end
+	
+	searchbar.Changed:Connect(UpdateInputOfSearchText)
+	
+	Refresh = addButton("Refresh", function()
+		local materials = game:GetService("Players").LocalPlayer.Materials
+		for _, Button in pairs(SelectedPlant.Frame:GetChildren()) do
+			if Button:IsA("TextButton") and not Button.Name:find("Inv Button") and Button ~= Refresh then
+				Button:Destroy()
+			end
+		end
+		for _, material in pairs(materials:GetChildren()) do
+			addClickSelect(material.Name, SelectedPlant)
+		end
+	end)
+	Refresh.Parent = SelectedPlant.Frame
+	
+	addToggle("Auto Place", function()
+		for PatchNum, berry in pairs(Patches) do
+			if berry.IsPlace == false then
+				local args = {
+					[1] = Action.Place,
+					[2] = tonumber(PatchNum),
+					[3] = SelectedPlant.Button.Text
+				}
+				
+				game:GetService("ReplicatedStorage"):WaitForChild("BerryPatch"):FireServer(unpack(args))
+			end
+		end
+	end)
+	
+	addToggle("Auto Harvest", function()
+		wait(1)
+		for PatchNum, berry in pairs(Patches) do
+			if berry.IsReady == true and (game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position - berry["Patch"].Position).magnitude < 175 then
+				local args = {
+					[1] = Action.Harvest,
+					[2] = tonumber(PatchNum)
+				}
+				
+				game:GetService("ReplicatedStorage"):WaitForChild("BerryPatch"):FireServer(unpack(args))
+			end
+		end
+	end)
+	
+	addToggle("Auto Watering", function()
+		for PatchNum, berry in pairs(Patches) do
+			if berry.IsWater == false then
+				local args = {
+					[1] = Action.Watering,
+					[2] = tonumber(PatchNum)
+				}
+				
+				game:GetService("ReplicatedStorage"):WaitForChild("BerryPatch"):FireServer(unpack(args))
+			end
+		end
+	end)
+	
+	createPage("Auto Collect")
+	
+	local Bushes = game:GetService("Workspace").Map2.Bushes
+	local Ores = game:GetService("Workspace").Map2.Ores
+	local Clams = game:GetService("Workspace").Map2.Clams
+	local Distance = 20
+	
+	addToggle("Auto Collect Berrys", function()
+		for _, bush in pairs(Bushes:GetChildren()) do
+			if (bush:FindFirstChild("Bush").Position - game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position).magnitude < 30 then
+				for _, berry in pairs(bush:GetChildren()) do
+					if berry:FindFirstChildOfClass("ProximityPrompt") and (berry.Position - game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position).magnitude < Distance then
+						fireproximityprompt(berry:FindFirstChildOfClass("ProximityPrompt"))
+						wait()
+					end
+				end
+			end
+		end
+	end)
+	
+	addToggle("Auto Collect Ores", function()
+		for _, Chulk in pairs(Ores:GetChildren()) do
+			if (Chulk:FindFirstChild("Bush").Position - game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position).magnitude < 30 then
+				for _, ore in pairs(Chulk:GetChildren()) do
+					if ore:FindFirstChildOfClass("ProximityPrompt") and (ore.Position - game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position).magnitude < Distance then
+						fireproximityprompt(ore:FindFirstChildOfClass("ProximityPrompt"))
+						wait()
+					end
+				end
+			end
+		end
+	end)
+	
+	addToggle("Auto Collect Pearls", function()
+		for _, clam in pairs(Clams:GetChildren()) do
+			if (clam:FindFirstChild("Bush").Position - game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position).magnitude < 30 then
+				for _, pearl in pairs(clam:GetChildren()) do
+					if pearl:FindFirstChildOfClass("ProximityPrompt") and (pearl.Position - game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position).magnitude < Distance then
+						fireproximityprompt(pearl:FindFirstChildOfClass("ProximityPrompt"))
+						wait()
+					end
+				end
+			end
+		end
+	end)
+	
+	addToggle("Collect Star Fragment", function()
+		local StarFragment = game:GetService("Workspace"):FindFirstChild("Star Fragment")
+		local OldCF = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame
+		
+		game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(StarFragment.Position.X, StarFragment.Position.Y, StarFragment.Position.Z)
+		wait(0.25)
+		fireproximityprompt(StarFragment:FindFirstChildOfClass("ProximityPrompt"))
+		wait()
+		game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = OldCF
+	end)
+	
+	createPage("Fishing")
+	
+	local fishBerry = addSelected("Red Berry")
+	
+	local fishingBerries = {
+		["Red Berry"] = 1,
+		["Blue Berry"] = 2,
+		["Purple Berry"] = 3,
+		["Choccy Bean"] = 4,
+		["Corn"] = 5,
+		["Magma Berry"] = 6,
+		["Frost Berry"] = 7,
+		["Obsidian Berry"] = 8,
+		["Gold Berry"] = 9,
+		["Radioactive Berry"] = 10,
+		["Sprout Necrocylial"] = 11
+	}
+	
+	for name, _ in pairs(fishingBerries) do
+		addClickSelect(tostring(name), fishBerry)
+	end
+	
+	local FishingPlaceName = addSelected("None")
+	
+	local PlaceSearchBar = addTextBox("", "Search Bar")
+	PlaceSearchBar.Parent = FishingPlaceName.Frame
+	
+	local scrollingframe = FishingPlaceName.Frame
+	local searchbar = PlaceSearchBar
+	function UpdateInputOfSearchText()
+		local InputText = string.upper(searchbar.Text)
+		for _,button in pairs(scrollingframe:GetChildren())do
+			if button:IsA("TextButton") and not string.find(button.Name, "Inv Button") and not string.find(button.Name, "Refresh") then
+				if InputText == "" or string.find(string.upper(button.Name),InputText) ~= nil then
+					button.Visible = true
+			 	else
+					button.Visible = false
+				end
+			end
+		end
+	end
+	
+	searchbar.Changed:Connect(UpdateInputOfSearchText)
+	
+	RefreshPlace = addButton("Refresh", function()
+		local alreadyPlace = {}
+		for _, Button in pairs(FishingPlaceName.Frame:GetChildren()) do
+			if Button:IsA("TextButton") and not Button.Name:find("Inv Button") and Button ~= RefreshPlace then
+				Button:Destroy()
+			end
+		end
+		for _, place in pairs(game:GetService("Workspace").Stuff.Fishing:GetChildren()) do
+			if not table.find(alreadyPlace, place.Name) then
+				table.insert(alreadyPlace, place.Name)
+				addClickSelect(place.Name, FishingPlaceName)
+			end
+		end
+	end)
+	RefreshPlace.Parent = FishingPlaceName.Frame
+	
+	addToggle("Auto Caught", function()
+		local rod = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool")
+		local Fake = rod.FakeBobber
+		local caughtSound = Fake.Fish
+		local remote = rod.RemoteEvent
+		if rod:FindFirstChild("FakeBobber") and caughtSound.Playing == true and Fake.Parent ~= nil then
+			remote:FireServer()
+		end
+	end)
+	
+	addToggle("Fishing", function()
+		local FishRod = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool")
+		if not FishRod:FindFirstChild("FakeBobber") then
+			FishRod.RemoteEvent:FireServer(game:GetService("Workspace").Stuff.Fishing[FishingPlaceName.Button.Text], game:GetService("Players").LocalPlayer.Character.Head.Position, fishingBerries[fishBerry.Button.Text])
+		end
+		wait(1)
+	end)
+end)
+
+addButton("Prob Hunt", function()
+	RedGui()
+	addTitle("Main")
+	addTitle("LocalPlayer")
+	addTitle("Token Farm")
+	addTitle("Fun")
+	
+	createPage()
+	addTextLabel("Team: Hide")
+	
+	addButton("RePosition / ReLight", function()
+		game:GetService("ReplicatedStorage"):WaitForChild("GameFunctions"):WaitForChild("Reposition"):FireServer()
+	end)
+	
+	createPage()
+	Amount = addTextBox("10", "Amount")
+	
+	addButton("Add Health", function()
+		local args = {
+			 [1] = "Health",
+			 [2] = tonumber(Amount.Text)
+		}
+		game:GetService("ReplicatedStorage"):WaitForChild("GameFunctions"):WaitForChild("StatChange"):FireServer(unpack(args))
+	end)
+	
+	addButton("Add Energy", function()
+		local args = {
+			 [1] = "Energy",
+			 [2] = tonumber(Amount.Text)
+		}
+		game:GetService("ReplicatedStorage"):WaitForChild("GameFunctions"):WaitForChild("StatChange"):FireServer(unpack(args))
+	end)
+	
+	createPage()
+	addToggle("Get Token", function()
+		Touch(game:GetService("Workspace").Lobby.LobbyObby.Token)
+		Touch(game:GetService("Workspace").LavaObby.Token)
+	end)
+	
+	createPage()
+	local SelectedRole = addSelected("None")
+	
+	addClickSelect("Hider")
+	addClickSelect("Seeker")
+	addClickSelect("Lobby")
+	addClickSelect("All")
+	addClickSelect("Others")
+	addClickSelect("Yourself")
+	addClickSelect("Nearest")
+	
+	addButton("Zap Selected Role", function()
+		if SelectedRole.Button.Text == "Nearest" then
+			for i,v in pairs(getPlayer("nearest")) do
+				Zap(v)
+			end
+		elseif SelectedRole.Button.Text == "All" then
+			for i,v in pairs(game.Players:GetPlayers()) do
+				Zap(v)
+			end
+		elseif SelectedRole.Button.Text == "Others" then
+			for i,v in pairs(game.Players:GetPlayers()) do
+				if v ~= game.Players.LocalPlayer then
+					Zap(v)
+				end
+			end
+		elseif SelectedRole.Button.Text == "Yourself" then
+			Zap(game.Players.LocalPlayer)
+		else
+			for i,v in pairs(game.Players:GetPlayers()) do
+				if v ~= game.Players.LocalPlayer and v.Character.Role.Value == SelectedRole.Button.Text then
+					Zap(v)
+				end
+			end
+		end
+	end)
+	
+	function Zap(Player)
+		local args = {
+			 [1] = "Hit",
+			 [2] = Player.Character
+		}
+		game:GetService("ReplicatedStorage"):WaitForChild("GameFunctions"):WaitForChild("Shock"):FireServer(unpack(args))
+	end
+	
+	function Touch(Part)
+		spawn(function()
+			if Part then
+				firetouchinterest(Part, game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, 1)
+				firetouchinterest(Part, game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, 0)
+			end
+		end)
+	end 
+end)
+
+addButton("Elevator" function()
+	RedGui()
+	createPage()
+	addButton("Collect Coins", function()
+		OldCF = game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame
+		for i,v in pairs(game:GetService("Workspace"):GetDescendants()) do
+			if v:IsA("MeshPart") and v.Name == "Coin" then
+				wait()
+				game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = v.CFrame
+			end
+		end
+		wait()
+		game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = OldCF
+	end)
+	
+	addButton("Collect Rocks", function()
+		for i,v in pairs(workspace.bugbo.Build.Rocks:GetChildren()) do
+			if v.Name == "Rock" and v: FindFirstChildOfClass ("ClickDetector") then
+				fireclickdetector(v: FindFirstChildOfClass ("ClickDetector"))
+			end
+		end
+	end) 
+	
+	addButton("Click Buttons", function()
+		for i,v in pairs(game:GetService("Workspace").ButtonCompetition.Build.ActivatedButtons: GetDescendants ()) do
+			if v: FindFirstChildOfClass ("ClickDetector") then
+				fireclickdetector(v: FindFirstChildOfClass ("ClickDetector"))
+			end
+		end
+	end)
+end)
+
+createPage("Others")
+
+addButton("AimBot", function()
+	local AimToggle = false
+	
+	RedGui()
+	createPage("Main")
+	
+	addToggle("Auto Fire", function()
+		local camera = game:GetService("Workspace").CurrentCamera
+		local button = game:GetService("Players").LocalPlayer.PlayerGui.GunGUI.MobileButtons.FireButton
+		local Humanoid, Char = CheckHumanoid()
+	
+		spawn(function()
+			if AimToggle then
+				for i = 1, 10 do
+					if Char.Humanoid.Health ~= 0 then
+						camera.CFrame = CFrame.new(camera.CFrame.p, Char[basepart.Text].CFrame.p)
+					end
+					wait()
+				end
+			end
+		end)
+	
+		if Humanoid then
+			for i,con in pairs(getconnections(button.MouseButton1Down)) do
+				spawn(con.Function)
+			end
+		else
+			for i,con in pairs(getconnections(button.MouseButton1Up)) do
+				spawn(con.Function)
+			end
+		end
+	end)
+	
+	addToggle("Auto Aim", function()
+		local camera = game:GetService("Workspace").CurrentCamera
+		local Humanoid = CheckHumanoid()
+		
+		if Humanoid then
+			AimToggle = true
+		else
+			AimToggle = false
+		end
+	end)
+	
+	basepart = addButton("Head", function()
+		if basepart.Text == "Head" then
+			basepart.Text = "Torso"
+		elseif basepart.Text == "Torso" then
+			basepart.Text = "Head"
+		end
+	end)
+	
+	function CheckHumanoid()
+		local camera = game:GetService("Workspace").CurrentCamera
+		local cameraCFrame = camera.CFrame
+		local rayStart = cameraCFrame.Position
+		local rayDirection = cameraCFrame.LookVector * 1000
+		
+		local ray = Ray.new(rayStart, rayDirection)
+		local part = game:GetService("Workspace"):FindPartOnRayWithIgnoreList(ray, {game:GetService("Players").LocalPlayer.Character, game:GetService("Workspace").CurrentCamera, game:GetService("Workspace").Main.Barrier})
+		
+		if part and part.Parent:FindFirstChildOfClass("Humanoid") and part.Parent:FindFirstChildOfClass("Humanoid").Health ~= 0 then
+			 return true, part.Parent
+		else
+			return false, nil
+		end
+	end
+end)
+
+createPage("Tools")
+
+addButton("Click To Kill", function()
+	local KilledValue = 0
+	local KilledName = ""
+	local mouse = game.Players.LocalPlayer:GetMouse()
+	local tool = Instance.new("Tool")
+	tool.Parent = game.Players.LocalPlayer.Backpack
+	tool.RequiresHandle = false
+	tool.Name = "Killed:"
+	tool.Activated:connect(function()
+		target = mouse.Target
+		if target.Parent:FindFirstChildOfClass("Humanoid") and target.Parent:FindFirstChildOfClass("Humanoid").Health ~= 0 and target.Parent.Name == KilledName then
+			KilledValue = KilledValue + 1
+			tool.Name = "Killed: " .. target.Parent.Name .. " (+" .. KilledValue .. ")"
+		elseif target.Parent:FindFirstChildOfClass("Humanoid") and target.Parent:FindFirstChildOfClass("Humanoid").Health ~= 0 and target.Parent.Name ~= KilledName then
+			KilledValue = 1
+			tool.Name = "Killed: " .. target.Parent.Name .. " (+" .. KilledValue .. ")"
+		end
+		if target.Parent:FindFirstChildOfClass("Humanoid") and target.Parent:FindFirstChildOfClass("Humanoid").Health ~= 0 then
+			target.Parent:FindFirstChildOfClass("Humanoid").Health = 0
+			warn("Killed: " .. getHie(target.Parent))
+			Output(target.Parent.Name, "Killed:")
+		end
+		KilledName = target.Parent.Name
+	end)
+end)
+
+addButton("Click Kill All NPC", function()
+	local tool = Instance.new("Tool")
+	
+	tool.Parent = game.Players.LocalPlayer.Backpack
+	tool.RequiresHandle = false
+	tool.Name = "Kill All NPCs"
+	tool.Activated:connect(function()
+		local Players = {}
+		for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+			table.insert(Players, plr.Character)
+		end
+		for _, Hum in pairs(game:GetService("Workspace"):GetDescendants()) do
+			if Hum:IsA("Humanoid") and Hum.Health ~= 0 and not table.find(Players, Hum.Parent) then
+				Hum.Health = 0
+				warn("Killed NPC: " .. getHie(Hum))
+				Output(Hum.Parent.Name, "Killed:")
+			end
+		end
+	end)
+end)
+
+addButton("Click Bring All NPC", function()
+	local mouse = game.Players.LocalPlayer:GetMouse()
+	local tool = Instance.new("Tool")
+	local WayPointTool = Instance.new("Tool")
+	local PartStorage = Instance.new("Folder", Ws)
+	local WayPointPart = Instance.new("Part", PartStorage)
+	local Adornee = Instance.new("BoxHandleAdornment", WayPointPart)
+	PartStorage.Name = "WayPointPart"
+	
+	WayPointPart.Name = "WayPointPart"
+	WayPointPart.Size = Vector3.new(1, 1, 1)
+	WayPointPart.CanCollide = false
+	WayPointPart.Anchored = true
+	WayPointPart.Color = Color3.new(0, 1, 0)
+	WayPointPart.Material = "Neon"
+	WayPointPart.Position = Vector3.new(0, 10000000, 0)
+	
+	Adornee.Adornee = WayPointPart
+	Adornee.Size = WayPointPart.Size
+	Adornee.Color3 = WayPointPart.Color
+	Adornee.AlwaysOnTop = true
+	Adornee.ZIndex = 1
+	
+	WayPointTool.Parent = game.Players.LocalPlayer.Backpack
+	WayPointTool.RequiresHandle = false
+	WayPointTool.Name = "Way Point:"
+	WayPointTool.Activated:connect(function()
+		_G.WayPoint = mouse.Hit.Position
+		WayPointTool.Name = "WayPoint: " .. tostring(mouse.Hit.Position)
+		WayPointPart.Position = _G.WayPoint
+	end)
+	
+	tool.Parent = game.Players.LocalPlayer.Backpack
+	tool.RequiresHandle = false
+	tool.Name = "Bring All NPCs"
+	tool.Activated:connect(function()
+		local Players = {}
+		for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+			table.insert(Players, plr.Character)
+		end
+		for _, Hum in pairs(game:GetService("Workspace"):GetDescendants()) do
+			if Hum:IsA("Humanoid") and Hum.Health ~= 0 and not table.find(Players, Hum.Parent) then
+				HumParent = Hum.Parent
+				repeat
+					if HumParent:IsA("Model") then
+						break
+					else
+						HumParent = HumParent.Parent
+					end
+				until HumParent:IsA("Model")
+				if HumParent:FindFirstChild("HumanoidRootPart") then
+					HumParent:FindFirstChild("HumanoidRootPart").CFrame = WayPointPart.CFrame
+				end
+				warn("Teleport NPC: " .. getHie(Hum.Parent) .. " To " .. tostring(_G.WayPoint))
+			end
+		end
+	end)
+	
+	game:GetService("Players").LocalPlayer.Character.Humanoid.Died:Connect(function()
+		tool:Destroy()
+		WayPointTool:Destroy()
+		PartStorage:Destroy()
+	end)
+end)
+
+addButton("Make NPC Fellow", function()
+	local mouse = game.Players.LocalPlayer:GetMouse()
+	local tool = Instance.new("Tool")
+	tool.Parent = game.Players.LocalPlayer.Backpack
+	tool.RequiresHandle = false
+	tool.Name = "Teleport"
+	tool.Activated:connect(function()
+		local pos = mouse.Hit+Vector3.new(0, 0, 0)
+		local CFramepos = CFrame.new(pos.X,pos.Y,pos.Z)
+		local Positionpos = Vector3.new(pos.X,pos.Y,pos.Z)
+		
+		local Ignores = {}
+		
+		for i,v in pairs(game.Players:GetPlayers()) do
+			pcall(function()
+				table.insert(Ignores, v.Character.Humanoid)
+			end)
+		end
+	
+		pcall(function()
+			for i,v in pairs(workspace:GetDescendants()) do
+				if v:IsA("Humanoid") and not table.find(Ignores, v) then
+					v:MoveTo(Positionpos)
+				end
+			end
+		end)
+	end)
+end)
