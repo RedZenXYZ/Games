@@ -11,7 +11,7 @@ function UpdateInputOfSearchText()
 	local InputText = string.upper(searchbar.Text)
 	for _, frame in pairs(scrollingframe:GetChildren())do
 		if frame:IsA("TextButton") then
-			if InputText == "" or frame.Name:upper():find(InputText) ~= nil then
+			if InputText == "" or frame.Text:upper():find(InputText) ~= nil or frame == searchbar then
 				frame.Visible = true
 		 	else
 				frame.Visible = false
