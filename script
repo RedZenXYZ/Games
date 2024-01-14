@@ -1,6 +1,7 @@
 loadstring(game:HttpGet('https://raw.githubusercontent.com/RedZenXYZ/RedHub/main/Red_GuiScript'))()
 
 RedGui()
+createPage("Games")
 local ScrollFrame = createPage("Games")
 
 local SearchBar = addTextBox("", "SearchBar")
