@@ -132,6 +132,43 @@ addButton("Harmful Company", function()
 	function Teleport(cframe)
 		game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = cframe
 	end
+
+	createPage("Others")
+
+	addToggle("Auto Farm", function()
+		local Map = "Ogre"
+		if game:GetService("Workspace"):FindFirstChild("Map") and #game:GetService("Workspace").Items:GetChildren() ~= 0 then
+			GetItems()
+			wait(1)
+			fireproximityprompt(game:GetService("Workspace").Ship.takeoff:FindFirstChildOfClass("ProximityPrompt"))
+		else
+			SellItems()
+			local args = {
+				[1] = {[1] = "Terminal", [2] = Map}
+			}
+			game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+		end
+	end)
+
+	function GetItems()
+		for i,v in pairs(game:GetService("Workspace").Items:GetChildren()) do
+			if (v.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).magnitude >= 30 then
+				ItemMode(v, "DropItem")
+				wait(0.3)
+				fireproximityprompt(v:FindFirstChildOfClass("ProximityPrompt"))
+				firetouchinterest(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, game:GetService("Workspace").Ship.droparea, 0)
+				firetouchinterest(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart, game:GetService("Workspace").Ship.droparea, 1)
+				wait(0.2)
+				ItemMode(v, "DropItem")
+			end
+		end
+	end
+
+	function SellItems()
+		for i,v in pairs(game:GetService("Workspace").Items:GetChildren()) do
+			ItemMode(v, "SellItem")
+		end
+	end
 	
 	function ItemMode(Item, Mode)
 		local args = {
