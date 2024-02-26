@@ -21,6 +21,159 @@ function UpdateInputOfSearchText()
 end
 searchbar.Changed:Connect(UpdateInputOfSearchText)
 
+addButton("Infection Smile", function()
+	RedGui()
+	
+	createPage("Combat")
+	addToggle("Swing Aura", function()
+		pcall(function()
+			game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool"):FindFirstChild("SwingEvent"):FireServer()
+		end)
+	end)
+	
+	addButton("Get Weapons", function()
+		Old = game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame
+		game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-15, 3, -14)
+		wait(0.3)
+		fireclickdetector(game:GetService("Workspace").Map.HumanBase.Vendor.BatCollection:FindFirstChildOfClass("ClickDetector"))
+		fireclickdetector(game:GetService("Workspace").Map.HumanBase.Vendor.BottleCollection:FindFirstChildOfClass("ClickDetector"))
+		wait()
+		game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = Old
+	end)
+	
+	InfectionAura = addToggle("Infection Aura", function()
+		pcall(function()
+			game:GetService("Players").LocalPlayer.Character.Infected.InfectEvent:FireServer()
+		end)
+	end)
+	
+	createPage("Map")
+	addTextLabel("Coins")
+	addToggle("Collect Coins", function()
+		pcall(function()
+			for i, coin in pairs(game:GetService("Workspace"):GetDescendants()) do
+				if coin.Name == "SmileCoin" and coin:FindFirstChildOfClass("TouchTransmitter") then
+					if game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+						firetouchinterest(game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart"), coin, 1)
+						firetouchinterest(game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart"), coin, 0)
+					end
+				end
+			end
+		end)
+	end, "1")
+	
+	addTextLabel("Keys/Weapons")
+	addButton("Get Keys", function()
+		for i, v in pairs(workspace: GetDescendants ()) do
+			if string.find(v.Name:lower(), "key") and v:FindFirstChildOfClass("TouchTransmitter") then
+				firetouchinterest(game:GetService("Players").LocalPlayer.Character.Head, v, 1)
+				firetouchinterest(game:GetService("Players").LocalPlayer.Character.Head, v, 0)
+			end
+		end
+	end)
+	
+	createPage("HitBox")
+	addToggle("HitBox", function()
+		HitBox()
+	end)
+	
+	HitSize = TBox("10", "Size")
+	Tran = TBox("0.8", "Transparency")
+	
+	Red = TBox("0", "Red")
+	Green = TBox("1", "Green")
+	Blue = TBox("0", "Blue")
+	
+	createPage("Teleports")
+	addButton("Lobby", function()
+		newCFrame(CFrame.new(0, 0, 0))
+	end)
+	
+	createPage()
+	Rejoin = addButton("Rejoin", function()
+		if Rejoin.Text == "Rejoin" then
+			Rejoin.Text = "Are You Sure?"
+			Rejoin.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+			wait(3)
+			Rejoin.Text = "Rejoin"
+			Rejoin.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		elseif Rejoin.Text == "Are You Sure?" then
+			Rejoin.Text = "Please Wait..."
+			Rejoin.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+			game:GetService("TeleportService"):Teleport(game.PlaceId)
+		end
+	end)
+	
+	ServerHop = addButton("ServerHop", function()
+		if ServerHop.Text == "ServerHop" then
+			ServerHop.Text = "Are You Sure?"
+			ServerHop.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+			wait(3)
+			ServerHop.Text = "ServerHop"
+			ServerHop.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		else
+			if ServerHop.Text == "Are You Sure?" then
+				ServerHop.Text = "Please Wait..."
+				ServerHop.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+				local x = {}
+				for _, v in ipairs(game:GetService("HttpService"):JSONDecode(game:HttpGetAsync("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")).data) do
+					if type(v) == "table" and v.maxPlayers > v.playing and v.id ~= game.JobId then
+						x[#x + 1] = v.id
+					end
+				end
+				if #x > 0 then
+					game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, x[math.random(1, #x)])
+				else
+					ServerHop.Text = "Couldn't Find Server"
+					wait(3)
+					ServerHop.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+					ServerHop.Text = "ServerHop"
+				end
+			end
+		end
+	end)
+	
+	function HitBox()
+		for i, player in pairs(game:GetService("Players"):GetPlayers()) do
+			if tostring(game:GetService("Players").LocalPlayer.Team) == "Human" then
+				if player ~= game:GetService("Players").LocalPlayer and player.TeamColor ~= game:GetService("Players").LocalPlayer.TeamColor and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Torso") then
+					spawn(function()
+						if HitSize.Text == "" or 2 < tonumber(HitSize.Text) then
+							player.Character:FindFirstChild("HumanoidRootPart").Size = Vector3.new(HitSize.Text, HitSize.Text, HitSize.Text)
+						else
+							player.Character:FindFirstChild("HumanoidRootPart").Size = player.Character:FindFirstChild("Torso").Size
+						end
+						player.Character:FindFirstChild("HumanoidRootPart").Transparency = Tran.Text
+						player.Character:FindFirstChild("HumanoidRootPart").Color = Color3.new(Red.Text, Green.Text, Blue.Text)
+						player.Character:FindFirstChild("HumanoidRootPart").Material = "Neon"
+						player.Character:FindFirstChild("HumanoidRootPart").CanCollide = false
+					end)
+				elseif player ~= game:GetService("Players").LocalPlayer and player.TeamColor == game:GetService("Players").LocalPlayer.TeamColor and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Torso") then
+					spawn(function()
+						player.Character:FindFirstChild("HumanoidRootPart").Size = player.Character:FindFirstChild("Torso").Size
+						player.Character:FindFirstChild("HumanoidRootPart").Transparency = 1
+						player.Character:FindFirstChild("HumanoidRootPart").CanCollide = false
+					end)
+				end
+			elseif tostring(game:GetService("Players").LocalPlayer.Team) == "Smiling" then
+				if player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Torso") then
+					spawn(function()
+						player.Character:FindFirstChild("HumanoidRootPart").Size = player.Character:FindFirstChild("Torso").Size
+						player.Character:FindFirstChild("HumanoidRootPart").Transparency = 1
+						player.Character:FindFirstChild("HumanoidRootPart").CanCollide = false
+					end)
+				end
+			end
+		end
+	end
+	
+	function newCFrame(NewCFrame)
+		if game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+			game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = NewCFrame
+		end
+	end
+end)
+
 addButton("Harmful Company", function()
 	RedGui()
 	createPage("Items")
