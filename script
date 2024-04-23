@@ -991,7 +991,7 @@ addButton("Cross the boarder", function()
 	createPage("Main")
 	
 	addToggle("Money", function()
-		for _, money in next, game:GetService("Workspace").money:GetChildren([) do
+		for _, money in next, game:GetService("Workspace").money:GetChildren() do
 			if money:IsA("Part") and money:FindFirstChildOfClass("ClickDetector") then
 				fireclickdetector(money:FindFirstChildOfClass("ClickDetector"))
 			end
