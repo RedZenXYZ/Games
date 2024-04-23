@@ -22,28 +22,32 @@ end
 searchbar.Changed:Connect(UpdateInputOfSearchText)
 
 addButton("Infection Smile", function()
-	RedGui()
-	
-	createPage("Combat")
+RedGui()
+
+local plr = game:GetService("Players").LocalPlayer
+
+createPage("Combat")
 	addToggle("Swing Aura", function()
 		pcall(function()
-			game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool"):FindFirstChild("SwingEvent"):FireServer()
+			plr.Character:FindFirstChildOfClass("Tool"):FindFirstChild("SwingEvent"):FireServer()
 		end)
 	end)
 	
 	addButton("Get Weapons", function()
-		Old = game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame
-		game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-15, 3, -14)
-		wait(0.3)
+		local start = plr.Character:FindFirstChild("HumanoidRootPart").CFrame
+		plr.Character:FindFirstChild("HumanoidRootPart").CFrame = CFrame.new(-15, 3, -14)
+		wait(0.35)
 		fireclickdetector(game:GetService("Workspace").Map.HumanBase.Vendor.BatCollection:FindFirstChildOfClass("ClickDetector"))
 		fireclickdetector(game:GetService("Workspace").Map.HumanBase.Vendor.BottleCollection:FindFirstChildOfClass("ClickDetector"))
 		wait()
-		game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = Old
+		plr.Character:FindFirstChild("HumanoidRootPart").CFrame = start
 	end)
 	
 	InfectionAura = addToggle("Infection Aura", function()
 		pcall(function()
-			game:GetService("Players").LocalPlayer.Character.Infected.InfectEvent:FireServer()
+			if plr.Character:FindFirstChildOfClass("Humanoid").Health ~= 0 then
+				plr.Character.Infected.InfectEvent:FireServer()
+			end
 		end)
 	end)
 	
@@ -51,11 +55,11 @@ addButton("Infection Smile", function()
 	addTextLabel("Coins")
 	addToggle("Collect Coins", function()
 		pcall(function()
-			for i, coin in pairs(game:GetService("Workspace"):GetDescendants()) do
+			for i, coin in next, game:GetService("Workspace"):GetDescendants() do
 				if coin.Name == "SmileCoin" and coin:FindFirstChildOfClass("TouchTransmitter") then
-					if game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-						firetouchinterest(game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart"), coin, 1)
-						firetouchinterest(game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart"), coin, 0)
+					if plr.Character:FindFirstChild("HumanoidRootPart") then
+						firetouchinterest(plr.Character:FindFirstChild("HumanoidRootPart"), coin, 1)
+						firetouchinterest(plr.Character:FindFirstChild("HumanoidRootPart"), coin, 0)
 					end
 				end
 			end
@@ -64,10 +68,10 @@ addButton("Infection Smile", function()
 	
 	addTextLabel("Keys/Weapons")
 	addButton("Get Keys", function()
-		for i, v in pairs(workspace: GetDescendants ()) do
+		for i, v in next, workspace:GetDescendants() do
 			if string.find(v.Name:lower(), "key") and v:FindFirstChildOfClass("TouchTransmitter") then
-				firetouchinterest(game:GetService("Players").LocalPlayer.Character.Head, v, 1)
-				firetouchinterest(game:GetService("Players").LocalPlayer.Character.Head, v, 0)
+				firetouchinterest(plr.Character.Head, v, 1)
+				firetouchinterest(plr.Character.Head, v, 0)
 			end
 		end
 	end)
@@ -77,12 +81,12 @@ addButton("Infection Smile", function()
 		HitBox()
 	end)
 	
-	HitSize = TBox("10", "Size")
-	Tran = TBox("0.8", "Transparency")
+	local HitSize = addTextBox("10", "Size")
+	local Tran = addTextBox("0.8", "Transparency")
 	
-	Red = TBox("0", "Red")
-	Green = TBox("1", "Green")
-	Blue = TBox("0", "Blue")
+	local Red = addTextBox("0", "Red")
+	local Green = addTextBox("1", "Green")
+	local Blue = addTextBox("0", "Blue")
 	
 	createPage("Teleports")
 	addButton("Lobby", function()
@@ -134,9 +138,9 @@ addButton("Infection Smile", function()
 	end)
 	
 	function HitBox()
-		for i, player in pairs(game:GetService("Players"):GetPlayers()) do
-			if tostring(game:GetService("Players").LocalPlayer.Team) == "Human" then
-				if player ~= game:GetService("Players").LocalPlayer and player.TeamColor ~= game:GetService("Players").LocalPlayer.TeamColor and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Torso") then
+		for i, player in next, game:GetService("Players"):GetPlayers() do
+			if tostring(plr.Team) == "Human" then
+				if player ~= plr and player.TeamColor ~= plr.TeamColor and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Torso") then
 					spawn(function()
 						if HitSize.Text == "" or 2 < tonumber(HitSize.Text) then
 							player.Character:FindFirstChild("HumanoidRootPart").Size = Vector3.new(HitSize.Text, HitSize.Text, HitSize.Text)
@@ -148,14 +152,14 @@ addButton("Infection Smile", function()
 						player.Character:FindFirstChild("HumanoidRootPart").Material = "Neon"
 						player.Character:FindFirstChild("HumanoidRootPart").CanCollide = false
 					end)
-				elseif player ~= game:GetService("Players").LocalPlayer and player.TeamColor == game:GetService("Players").LocalPlayer.TeamColor and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Torso") then
+				elseif player ~= plr and player.TeamColor == plr.TeamColor and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Torso") then
 					spawn(function()
 						player.Character:FindFirstChild("HumanoidRootPart").Size = player.Character:FindFirstChild("Torso").Size
 						player.Character:FindFirstChild("HumanoidRootPart").Transparency = 1
 						player.Character:FindFirstChild("HumanoidRootPart").CanCollide = false
 					end)
 				end
-			elseif tostring(game:GetService("Players").LocalPlayer.Team) == "Smiling" then
+			elseif tostring(plr.Team) == "Smiling" then
 				if player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Torso") then
 					spawn(function()
 						player.Character:FindFirstChild("HumanoidRootPart").Size = player.Character:FindFirstChild("Torso").Size
@@ -168,8 +172,8 @@ addButton("Infection Smile", function()
 	end
 	
 	function newCFrame(NewCFrame)
-		if game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-			game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart").CFrame = NewCFrame
+		if plr.Character:FindFirstChild("HumanoidRootPart") then
+			plr.Character:FindFirstChild("HumanoidRootPart").CFrame = NewCFrame
 		end
 	end
 end)
@@ -340,342 +344,174 @@ addButton("MM2", function()
 
 	createPage("AimBot ( Sheriff )")
 
-	
-
 	local MurderName = addTextLabel("nil")
 
-	
-
 	addToggle("Sheriff AimBot", function()
-
 		local MurderPlr = FindMurder()
-
 		if MurderPlr then
-
 			MurderName.Text = MurderPlr.Name
-
 		else
-
 			MurderName.Text = tostring(MurderPlr)
-
 		end
-
 		Shot(MurderPlr)
-
 	end)
-
 	
-
 	addToggle("Auto Equip Gun", function()
-
 		game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Gun").Parent = game:GetService("Players").LocalPlayer.Character
-
 	end)
-	
+
 	local Max = addTextBox("3", "")
-
 	
-
 	createPage("AimBot ( Murder )")
-
 	
-
 	local NearestTarget = addTextLabel("nil")
-
 	
-
 	addToggle("Murder AimBot", function()
-
 		local Target = GetNearest()
-
 		if Target then
-
 			NearestTarget.Text = Target.Name
-
 		else
-
 			NearestTarget.Text = tostring(Target)
-
 		end
-
 		Throw(Target)
-
 	end)
-
 	
-
 	createPage("ESP")
-
 	
-
 	local PlayerESP = addToggle("Player", function()
-
 		playerCharm()
-
 		wait(1)
-
 	end)
-
 	
-
 	function playerCharm()
-
 		for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-
 			if player ~= game:GetService("Players").LocalPlayer and player.Character and player.Character:FindFirstChildOfClass("Humanoid") and player.Character:FindFirstChildOfClass("Humanoid").Health ~= 0 then
-
 				if player.Character:FindFirstChild("Knife") or player.Backpack:FindFirstChild("Knife") then
-
 					Highlight(player, "red")
-
 				elseif player.Character:FindFirstChild("Gun") or player.Backpack:FindFirstChild("Gun") then
-
 					Highlight(player, "blue")
-
 				else
-
 					Highlight(player, "white")
-
 				end
-
 			end
-
 		end
-
 	end
-
 	
-
 	local roleColors = {
-
 		["red"] = Color3.new(1, 0, 0),
-
 		["blue"] = Color3.new(0, 0, 1),
-
 		["white"] = Color3.new(1, 1, 1)
-
 	}
-
 	
-
 	function GetPosition(target)
-
 		 if target.Character then
-
 			  local targetPosition = target.Character.HumanoidRootPart.Position
-
 			  local moveDirection = target.Character.Humanoid.MoveDirection
-
 	
-
 			  local predictedPosition = targetPosition + moveDirection * target.Character.HumanoidRootPart.Velocity.magnitude / tonumber(Max.Text)
-
 			  return predictedPosition
-
 		 end
-
 		
-
 		 return nil
-
 	end
-
 	
-
 	function Highlight(player, color)
-
 		local color = color:lower()
-
 		local roleColor = roleColors[color]
-
 		if player.Character:FindFirstChildOfClass("Highlight") then
-
 			player.Character:FindFirstChildOfClass("Highlight").FillColor = roleColor
-
 		else
-
 			local highlight = Instance.new("Highlight", player.Character)
-
 			highlight.FillColor = roleColor
-
 			task.spawn(function()
-
 				repeat wait() until PlayerESP.Text == "Player (Off)" or highlight.Parent == nil
-
 				highlight:Destroy()
-
 			end)
-
 		end
-
 	end
-
 	
-
 	function UnHighlight(player)
-
 		if player.Character:FindFirstChildOfClass("Highlight") then
-
 			player.Character:FindFirstChildOfClass("Highlight"):Destroy()
-
 		end
-
 	end
-
 	
-
 	function IsBlocked(plr)
-
 		local LocalCharacter = game:GetService("Players").LocalPlayer.Character
-
 		local Ray = Ray.new(LocalCharacter.PrimaryPart.Position, (plr.Character.PrimaryPart.Position - LocalCharacter.PrimaryPart.Position))
-
 		local part = game:GetService("Workspace"):FindPartOnRayWithIgnoreList(Ray, {LocalCharacter})
-
 		if part ~= nil then
-
 			if part:IsDescendantOf(plr.Character) then
-
 				return true
-
 			end
-
 		end
-
 		
-
 		return false
-
 	end
-
 	
-
 	function GetUnBlockingPlayers()
-
 		local player = game:GetService("Players").LocalPlayer
-
 		players = game:GetService("Players"):GetPlayers()
-
 		
-
 		local LocalCharacter = game:GetService("Players").LocalPlayer.Character
-
 		local Players = {}
-
 		for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
-
 			if plr ~= player and plr.Character and plr.Character:FindFirstChildOfClass("Humanoid") and plr.Character:FindFirstChildOfClass("Humanoid").Health ~= 0 then
-
 				local Ray = Ray.new(LocalCharacter.PrimaryPart.Position, (plr.Character.PrimaryPart.Position - LocalCharacter.PrimaryPart.Position))
-
 				local part = game:GetService("Workspace"):FindPartOnRayWithIgnoreList(Ray, {LocalCharacter})
-
 				if part ~= nil then
-
 					if part:IsDescendantOf(plr.Character) then
-
 						table.insert(Players, plr)
-
 					end
-
 				end
-
 			end
-
 		end
-
 		
-
 		return Players
-
 	end
-
 	
-
 	function GetNearest()
-
 		local closestPlayer, closestDistance
-
 		for _, p in pairs(GetUnBlockingPlayers()) do
-
 			if p ~= game:GetService("Players").LocalPlayer and p.Character and IsBlocked(p) then
-
 				local distance = (game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position - p.Character.PrimaryPart.Position).Magnitude
-
 				if not closestDistance or distance < closestDistance then
-
 					closestDistance = distance
-
 					closestPlayer = p
-
 				end
-
 			end
-
 		end
-
 	
-
 		if closestPlayer then
-
 			return (closestPlayer)
-
 		end
-
 		
-
 		return nil
-
 	end
-
 	
-
 	function FindMurder()
-
 		for _, murder in pairs(game:GetService("Players"):GetPlayers()) do
-
 			if (murder.Backpack:FindFirstChild("Knife")) or (murder.Character and murder.Character:FindFirstChild("Knife")) then
-
 				if IsBlocked(murder) then
-
 					return murder
-
 				end
-
 			end
-
 		end
-
 	end
-
 	
-
 	function Throw(Target)
-
 		pcall(function()
-
 			local pos = GetPosition(Target)
-
 			local cframe = CFrame.new(pos.X, pos.Y, pos.Z)
-
 			game:GetService("Players").LocalPlayer.Character:FindFirstChild("Knife").Throw:FireServer(cframe, game:GetService("Players").LocalPlayer.Character.RightHand.Position)
-
 		end)
-
 	end
-
 	
-
 	function Shot(Target)
-
 		pcall(function()
-
 			local pos = GetPosition(Target)
-
 			game:GetService("Players").LocalPlayer.Character:FindFirstChild("Gun").KnifeServer.ShootGun:InvokeServer(1, pos, "AH")
-
 		end)
-
 	end
 end)
 
@@ -1022,9 +858,9 @@ addButton("SkyWar", function()
 				game:GetService("Players").LocalPlayer.Backpack:FindFirstChild("Axe"):FindFirstChildOfClass("RemoteEvent"):FireServer(unpack(args))
 			end
 		end
-		end)
+	end)
 		
-		addToggle("Auto Mining Ores", function()
+	addToggle("Auto Mining Ores", function()
 		local root = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart
 		local PlrY = root.Position.Y - 3
 		
@@ -1061,7 +897,7 @@ addButton("Zombies Attack", function()
 		local args = {
 			 [1] = {
 				  ["Normal"] = Vector3.yAxis,
-			 	 ["Direction"] = Vector3.new(-389.2908630371094, -223.1598358154297, -220.57269287109375),
+			 	 ["Direction"] = Vector3.new(0, 0, 0),
 			 	 ["Name"] = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass('Tool').Name,
 			 	 ["Hit"] = Zombie.Head,
 				  ["Origin"] = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool").Origin.Position,
@@ -1100,7 +936,7 @@ addButton("Prison Life", function()
 	createPage()
 	
 	addToggle("Kill Aura", function()
-		for _, target in pairs(GetPlayer("nearest")) do
+		for _, target in next, GetPlayer("others") do
 			local args = {
 				[1] = target
 			}
@@ -1110,14 +946,14 @@ addButton("Prison Life", function()
 	end)
 	
 	addToggle("Auto shoot", function()
-		for _, target in pairs(GetPlayer("nearest", {["Team"] = true, ["Raycasting"] = true})) do
+		for _, target in next, GetPlayer("nearest", {["Team"] = true, ["Raycasting"] = true}) do
 			local args = {
 				[1] = {
 					[1] = {
-							["RayObject"] = Ray.new(game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool").Muzzle.Position, target.Character.HumanoidRootPart.Position),
-							["Distance"] = (target.Character.PrimaryPart.Position - game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position).magnitude,
-							["Cframe"] = target.Character.HumanoidRootPart.CFrame,
-							["Hit"] = target.Character.Head
+						["RayObject"] = Ray.new(game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool").Muzzle.Position, target.Character.HumanoidRootPart.Position),
+						["Distance"] = (target.Character.PrimaryPart.Position - game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position).magnitude,
+						["Cframe"] = target.Character.HumanoidRootPart.CFrame,
+						["Hit"] = target.Character.Head
 					}
 				},
 				[2] = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool")
@@ -1132,8 +968,8 @@ addButton("Trench War", function()
 	RedGui()
 	createPage()
 	
-	addButton("Kill", function()
-		for _, target in pairs(getPlayer("nearest", {["Team"] = true, ["Raycasting"] = true})) do
+	addButton("Kill Others", function()
+		for _, target in next, GetPlayer("others", {["Team"] = true}) do
 			local args = {
 				[1] = target.Character:FindFirstChildOfClass("Humanoid"),
 				[2] = 200,
@@ -1155,7 +991,7 @@ addButton("Cross the boarder", function()
 	createPage("Main")
 	
 	addToggle("Money", function()
-		for _, money in pairs(game:GetService("Workspace").money:GetChildren()) do
+		for _, money in next, game:GetService("Workspace").money:GetChildren([) do
 			if money:IsA("Part") and money:FindFirstChildOfClass("ClickDetector") then
 				fireclickdetector(money:FindFirstChildOfClass("ClickDetector"))
 			end
@@ -1163,7 +999,7 @@ addButton("Cross the boarder", function()
 	end)
 	
 	addToggle("Shoot", function()
-		for _, target in pairs(getPlayer("nearest", {["Team"] = true, ["Raycasting"] = true})) do
+		for _, target in next, GetPlayer("nearest", {["Team"] = true, ["Raycasting"] = true}) do
 			local args = {
 				[1] = target.Character.PrimaryPart.Position,
 				[2] = target.Character.Head,
@@ -1184,7 +1020,7 @@ addButton("The Test", function()
 	
 	addButton("Choose Number Game", function()
 		local args = {
-			 [1] = 1
+			[1] = 1
 		}
 		
 		game:GetService("ReplicatedStorage"):WaitForChild("Vote"):FireServer(unpack(args))
@@ -1786,7 +1622,7 @@ addButton("Click To Kill", function()
 	local tool = Instance.new("Tool")
 	tool.Parent = game.Players.LocalPlayer.Backpack
 	tool.RequiresHandle = false
-	tool.Name = "Killed:"
+	tool.Name = "Click To Kill"
 	tool.Activated:connect(function()
 		target = mouse.Target
 		if target.Parent:FindFirstChildOfClass("Humanoid") and target.Parent:FindFirstChildOfClass("Humanoid").Health ~= 0 and target.Parent.Name == KilledName then
@@ -1813,14 +1649,13 @@ addButton("Click Kill All NPC", function()
 	tool.Name = "Kill All NPCs"
 	tool.Activated:connect(function()
 		local Players = {}
-		for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+		for _, plr in next,game:GetService("Players"):GetPlayers() do
 			table.insert(Players, plr.Character)
 		end
-		for _, Hum in pairs(game:GetService("Workspace"):GetDescendants()) do
+		for _, Hum in next,game:GetService("Workspace"):GetDescendants() do
 			if Hum:IsA("Humanoid") and Hum.Health ~= 0 and not table.find(Players, Hum.Parent) then
 				Hum.Health = 0
 				warn("Killed NPC: " .. getHie(Hum))
-				Output(Hum.Parent.Name, "Killed:")
 			end
 		end
 	end)
@@ -1863,14 +1698,14 @@ addButton("Click Bring All NPC", function()
 	tool.Name = "Bring All NPCs"
 	tool.Activated:connect(function()
 		local Players = {}
-		for _, plr in pairs(game:GetService("Players"):GetPlayers()) do
+		for _, plr in next,game:GetService("Players"):GetPlayers() do
 			table.insert(Players, plr.Character)
 		end
-		for _, Hum in pairs(game:GetService("Workspace"):GetDescendants()) do
+		for _, Hum in next,game:GetService("Workspace"):GetDescendants() do
 			if Hum:IsA("Humanoid") and Hum.Health ~= 0 and not table.find(Players, Hum.Parent) then
 				HumParent = Hum.Parent
 				repeat
-					if HumParent:IsA("Model") then
+					if HumParent:IsA("Model") or HumParent == nil then
 						break
 					else
 						HumParent = HumParent.Parent
@@ -1891,12 +1726,12 @@ addButton("Click Bring All NPC", function()
 	end)
 end)
 
-addButton("Make NPC Fellow", function()
+addButton("Make NPC Follow", function()
 	local mouse = game.Players.LocalPlayer:GetMouse()
 	local tool = Instance.new("Tool")
 	tool.Parent = game.Players.LocalPlayer.Backpack
 	tool.RequiresHandle = false
-	tool.Name = "Teleport"
+	tool.Name = "Make NPC Follow"
 	tool.Activated:connect(function()
 		local pos = mouse.Hit+Vector3.new(0, 0, 0)
 		local CFramepos = CFrame.new(pos.X,pos.Y,pos.Z)
@@ -1904,14 +1739,14 @@ addButton("Make NPC Fellow", function()
 		
 		local Ignores = {}
 		
-		for i,v in pairs(game.Players:GetPlayers()) do
+		for i,v in next,game.Players:GetPlayers() do
 			pcall(function()
 				table.insert(Ignores, v.Character.Humanoid)
 			end)
 		end
 	
 		pcall(function()
-			for i,v in pairs(workspace:GetDescendants()) do
+			for i,v in next,workspace:GetDescendants() do
 				if v:IsA("Humanoid") and not table.find(Ignores, v) then
 					v:MoveTo(Positionpos)
 				end
@@ -1919,3 +1754,166 @@ addButton("Make NPC Fellow", function()
 		end)
 	end)
 end)
+
+function GetPlayersTeam()
+	local TeamCheckedPlayers = {}
+	for _, plr in pairs(game.Players:GetPlayers()) do
+		if plr ~= game.Players.LocalPlayer and plr.Team ~= game.Players.LocalPlayer.Team then
+			table.insert(TeamCheckedPlayers, plr)
+		end
+	end
+	
+	return TeamCheckedPlayers
+end
+
+function GetUnBlockingPlayers(Check, Pos)
+	local player = game.Players.LocalPlayer
+	if Check == true then
+		players = GetPlayersTeam()
+	else
+		players = game.Players:GetPlayers()
+	end
+	
+	local LocalCharacter = player.Character
+	local Players = {}
+	for _, plr in pairs(players) do
+		if plr ~= player and plr.Character and plr.Character:FindFirstChildOfClass("Humanoid") and plr.Character:FindFirstChildOfClass("Humanoid").Health ~= 0 then
+			local Ray = Ray.new(Pos, (plr.Character.PrimaryPart.Position - Pos))
+			local part = game:GetService("Workspace"):FindPartOnRayWithIgnoreList(Ray, {LocalCharacter})
+			if part ~= nil then
+				if part:IsDescendantOf(plr.Character) then
+					table.insert(Players, plr)
+				end
+			end
+		end
+	end
+	
+	return Players
+end
+
+function Ray2(Position1, Position2)
+	local Part = Instance.new("Part", workspace)
+	
+	Part.Position = Position1
+	Part.Size = Vector3.new(0.5, 0.5, 0.5)
+	Part.Anchored = true
+	Part.Transparency = 1
+	Part.CanCollide = false
+
+	local Ray = Ray.new(Position2, (Position1 - Position2))
+	local part = game:GetService("Workspace"):FindPartOnRayWithIgnoreList(Ray, {game.Players.LocalPlayer.Character})
+
+	if part ~= nil and part == Part then
+		Part:Destroy()
+		
+		return true
+	else
+		Part:Destroy()
+		
+		return false
+	end
+end
+
+function GetPlayer(String, Information)
+	local Info = {
+		["raycasting"] = false,
+		["team"] = false,
+		["position"] = game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position,
+		["distance"] = math.huge
+	}
+	if Information ~= nil then
+		for name, value in pairs(Information) do
+			if Info[name:lower()] ~= nil then
+				Info[name:lower()] = value
+			end
+		end
+	end
+	local players = {}
+	if Info["raycasting"] == true and Info["team"] == true then
+		local players1 = GetUnBlockingPlayers(true, Info["position"])
+		for i, v in pairs(players1) do
+			if (game.Players.LocalPlayer.Character.PrimaryPart.Position - v.Character.PrimaryPart.Position).magnitude <= Info["distance"] then
+				table.insert(players, v)
+			end
+		end
+	elseif Info["raycasting"] == true and Info["team"] == false then
+		local players1 = GetUnBlockingPlayers(false, Info["position"])
+		for i, v in pairs(players1) do
+			if (game.Players.LocalPlayer.Character.PrimaryPart.Position - v.Character.PrimaryPart.Position).magnitude <= Info["distance"] then
+				table.insert(players, v)
+			end
+		end
+	elseif Info["team"] == true and Info["raycasting"] == false then
+		local players1 = GetPlayersTeam()
+		for i, v in pairs(players1) do
+			if (game.Players.LocalPlayer.Character.PrimaryPart.Position - v.Character.PrimaryPart.Position).magnitude <= Info["distance"] then
+				table.insert(players, v)
+			end
+		end
+	else
+		local players1 = game:GetService("Players"):GetPlayers()
+		for i, v in pairs(players1) do
+			if v.Character and v.Character:FindFirstChildOfClass("Humanoid") and v.Character:FindFirstChildOfClass("Humanoid").Health ~= 0 and (game.Players.LocalPlayer.Character.PrimaryPart.Position - v.Character.PrimaryPart.Position).magnitude <= Info["distance"] then
+				table.insert(players, v)
+			end
+		end
+	end
+
+	local Found = {}
+	local strl = String:lower()
+	if strl == "" then
+		return
+	elseif strl == "all" then
+		for i,v in pairs(players) do
+			table.insert(Found, v)
+		end
+	elseif strl == "others" then
+		for i,v in pairs(players) do
+			if v ~= game:GetService("Players").LocalPlayer then
+				table.insert(Found, v)
+			end
+		end
+	elseif strl == "me" then
+		table.insert(Found, game:GetService("Players").LocalPlayer)
+	elseif strl == "random" then
+		local localplayer = game:GetService("Players").LocalPlayer
+		local playersTable = {}
+		for _, plr in pairs(players) do
+			pcall(function()
+				if plr ~= localplayer then
+					table.insert(playersTable, plr)
+				end
+			end)
+		end
+		table.insert(Found, playersTable[math.random(1, #playersTable)])
+	elseif strl == "nearest" then
+		local player = game:GetService("Players").LocalPlayer
+		if player.Character then
+			localcharacter = player.Character
+			ohVector32 = localcharacter.PrimaryPart.Position
+		else
+			return
+		end
+		local closestPlayer, closestDistance
+		for _, p in pairs(players) do
+			if p ~= player and p.Character and p.Character:FindFirstChildOfClass("Humanoid") and p.Character:FindFirstChildOfClass("Humanoid").Health ~= 0 then
+				local distance = (ohVector32 - p.Character.PrimaryPart.Position).Magnitude
+				if not closestDistance or distance < closestDistance then
+					closestDistance = distance
+					closestPlayer = p
+				end
+			end
+		end
+		if closestPlayer then
+			table.insert(Found, closestPlayer)
+		end
+	else
+		for i,v in pairs(players) do
+			if v.Name:lower():sub(1, #String) == String:lower() or v.DisplayName:lower():sub(1, #String) == String:lower() then
+				table.insert(Found, v)
+			end
+		end
+	end
+	
+	return Found    
+end
