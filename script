@@ -1,4 +1,4 @@
-loadstring(game:HttpGet('https://raw.githubusercontent.com/RedZenXYZ/RedHub/main/Red_GuiScript'))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/RedZenXYZ/RedHub/main/Test'))()
 
 RedGui()
 local ScrollFrame = createPage("Games")
