@@ -1331,16 +1331,16 @@ addButton("I don't feel so good", function()
 		local OldCF = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame
 		
 		game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(StarFragment.Position.X, StarFragment.Position.Y, StarFragment.Position.Z)
-		wait(0.5)
+		wait(1)
 		fireproximityprompt(StarFragment:FindFirstChildOfClass("ProximityPrompt"))
-		wait(0.25)
+		wait(0.5)
 		game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = OldCF
 	end)
 	
 	createPage("Fishing")
-	
+
 	local fishBerry = addSelected("Red Berry")
-	
+
 	local fishingBerries = {
 		["Red Berry"] = 1,
 		["Blue Berry"] = 2,
@@ -1354,49 +1354,21 @@ addButton("I don't feel so good", function()
 		["Radioactive Berry"] = 10,
 		["Sprout Necrocylial"] = 11
 	}
-	
-	for name, _ in next,fishingBerries do
-		addClickSelect(tostring(name), fishBerry)
+
+	for name, number in next,fishingBerries do
+		addClickSelect(tostring(name))
 	end
-	
+
 	local FishingPlaceName = addSelected("None")
-	
-	local PlaceSearchBar = addTextBox("", "Search Bar")
-	PlaceSearchBar.Parent = FishingPlaceName.Frame
-	
-	local scrollingframe = FishingPlaceName.Frame
-	local searchbar = PlaceSearchBar
-	function UpdateInputOfSearchText()
-		local InputText = string.upper(searchbar.Text)
-		for _,button in next,scrollingframe:GetChildren() do
-			if button:IsA("TextButton") and not string.find(button.Name, "Inv Button") and not string.find(button.Name, "Refresh") then
-				if InputText == "" or string.find(string.upper(button.Name),InputText) ~= nil then
-					button.Visible = true
-			 	else
-					button.Visible = false
-				end
-			end
+
+	local alreadyPlace = {}
+	for _, place in pairs(game:GetService("Workspace").Stuff.Fishing:GetChildren()) do
+		if not table.find(alreadyPlace, place.Name) then
+			table.insert(alreadyPlace, place.Name)
+			addClickSelect(place.Name)
 		end
 	end
-	
-	searchbar.Changed:Connect(UpdateInputOfSearchText)
-	
-	RefreshPlace = addButton("Refresh", function()
-		local alreadyPlace = {}
-		for _, Button in pairs(FishingPlaceName.Frame:GetChildren()) do
-			if Button:IsA("TextButton") and not Button.Name:find("Inv Button") and Button ~= RefreshPlace then
-				Button:Destroy()
-			end
-		end
-		for _, place in pairs(game:GetService("Workspace").Stuff.Fishing:GetChildren()) do
-			if not table.find(alreadyPlace, place.Name) then
-				table.insert(alreadyPlace, place.Name)
-				addClickSelect(place.Name, FishingPlaceName)
-			end
-		end
-	end)
-	RefreshPlace.Parent = FishingPlaceName.Frame
-	
+
 	addToggle("Auto Caught", function()
 		local rod = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool")
 		local Fake = rod.FakeBobber
@@ -1404,15 +1376,18 @@ addButton("I don't feel so good", function()
 		local remote = rod.RemoteEvent
 		if rod:FindFirstChild("FakeBobber") and caughtSound.Playing == true and Fake.Parent ~= nil then
 			remote:FireServer()
+			caughtSound.Playing = false
 		end
 	end)
-	
+
 	addToggle("Fishing", function()
 		local FishRod = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool")
-		if not FishRod:FindFirstChild("FakeBobber") then
+		if not FishRod:FindFirstChild("FakeBobber") and FishRod.Name ~= "Fish Food" then
 			FishRod.RemoteEvent:FireServer(game:GetService("Workspace").Stuff.Fishing[FishingPlaceName.Button.Text], game:GetService("Players").LocalPlayer.Character.Head.Position, fishingBerries[fishBerry.Button.Text])
+			local WaitForFake = FishRod:WaitForChild("FakeBobber")
+		elseif FishRod.Name == "Fish Food" then
+			FishRod.RemoteEvent:FireServer(game:GetService("Workspace").Stuff.Fishing[FishingPlaceName.Button.Text], game:GetService("Players").LocalPlayer.Character.Head.Position)
 		end
-		wait(1)
 	end)
 end)
 
