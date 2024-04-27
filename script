@@ -1290,7 +1290,7 @@ addButton("I don't feel so good", function()
 	addToggle("Auto Collect Berrys", function()
 		for _, bush in pairs(Bushes:GetChildren()) do
 			if (bush:FindFirstChild("Bush").Position - game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position).magnitude < 30 then
-				for _, berry in pairs(bush:GetChildren()) do
+				for _, berry in next,bush:GetChildren() do
 					if berry:FindFirstChildOfClass("ProximityPrompt") and (berry.Position - game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position).magnitude < Distance then
 						fireproximityprompt(berry:FindFirstChildOfClass("ProximityPrompt"))
 						wait()
@@ -1303,7 +1303,7 @@ addButton("I don't feel so good", function()
 	addToggle("Auto Collect Ores", function()
 		for _, Chulk in pairs(Ores:GetChildren()) do
 			if (Chulk:FindFirstChild("Bush").Position - game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position).magnitude < 30 then
-				for _, ore in pairs(Chulk:GetChildren()) do
+				for _, ore in next,Chulk:GetChildren() do
 					if ore:FindFirstChildOfClass("ProximityPrompt") and (ore.Position - game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position).magnitude < Distance then
 						fireproximityprompt(ore:FindFirstChildOfClass("ProximityPrompt"))
 						wait()
@@ -1314,7 +1314,7 @@ addButton("I don't feel so good", function()
 	end)
 	
 	addToggle("Auto Collect Pearls", function()
-		for _, clam in pairs(Clams:GetChildren()) do
+		for _, clam in next,Clams:GetChildren() do
 			if (clam:FindFirstChild("Bush").Position - game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position).magnitude < 30 then
 				for _, pearl in pairs(clam:GetChildren()) do
 					if pearl:FindFirstChildOfClass("ProximityPrompt") and (pearl.Position - game:GetService("Players").LocalPlayer.Character.PrimaryPart.Position).magnitude < Distance then
@@ -1331,9 +1331,9 @@ addButton("I don't feel so good", function()
 		local OldCF = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame
 		
 		game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(StarFragment.Position.X, StarFragment.Position.Y, StarFragment.Position.Z)
-		wait(0.25)
+		wait(0.5)
 		fireproximityprompt(StarFragment:FindFirstChildOfClass("ProximityPrompt"))
-		wait()
+		wait(0.25)
 		game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = OldCF
 	end)
 	
@@ -1355,7 +1355,7 @@ addButton("I don't feel so good", function()
 		["Sprout Necrocylial"] = 11
 	}
 	
-	for name, _ in pairs(fishingBerries) do
+	for name, _ in next,fishingBerries do
 		addClickSelect(tostring(name), fishBerry)
 	end
 	
@@ -1368,7 +1368,7 @@ addButton("I don't feel so good", function()
 	local searchbar = PlaceSearchBar
 	function UpdateInputOfSearchText()
 		local InputText = string.upper(searchbar.Text)
-		for _,button in pairs(scrollingframe:GetChildren())do
+		for _,button in next,scrollingframe:GetChildren() do
 			if button:IsA("TextButton") and not string.find(button.Name, "Inv Button") and not string.find(button.Name, "Refresh") then
 				if InputText == "" or string.find(string.upper(button.Name),InputText) ~= nil then
 					button.Visible = true
